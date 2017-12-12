@@ -19,16 +19,37 @@ public class TankClient extends Frame {
 	 * 重画间隔(ms)
 	 */
 	public static final int PCELL = 50;
-	private Tank myTank = new Tank(100, 150, this);	
+	private Tank myTank = new Tank(100, 150, this, true);	
 	private boolean flag = true;
 	private Image image;
 	private List<Bullet> bullets = new ArrayList<Bullet>();
+	private List<Tank> enemys = new ArrayList<Tank>();
+	private static Random rnd = new Random();
 	
 	public static void main(String[] args) {
 		TankClient tc = new TankClient();
 		tc.launch();
 	}
 	
+	/**
+	 * 增加敌人
+	 */
+	public void addEnmeys() {
+		for(int i=0; i<10; i++) {
+			Tank t = new Tank(rnd.nextInt(GAME_WIDTH-Tank.WIDTH), 
+					30+rnd.nextInt(GAME_HEIGHT-Tank.HEIGHT-30), this, false);
+			while(t.isOverlap(enemys)) {
+				t = new Tank(rnd.nextInt(GAME_WIDTH-Tank.WIDTH), 
+						30+rnd.nextInt(GAME_HEIGHT-Tank.HEIGHT-30), this, false);
+			}
+			enemys.add(t);
+		}
+	}
+	
+	public List<Tank> getEnemys() {
+		return enemys;
+	}
+
 	public List<Bullet> getBullets() {
 		return bullets;
 	}
@@ -43,6 +64,7 @@ public class TankClient extends Frame {
 			}
 		});
 		this.addKeyListener(new KeyMonitor());
+		this.addEnmeys();
 		new Thread(new RePnt()).start();
 		this.setVisible(true);
 	}
@@ -55,6 +77,11 @@ public class TankClient extends Frame {
 		for(int i=0; i<bullets.size(); i++) {
 			Bullet b = bullets.get(i);
 			b.draw(g);
+		}
+		//绘制敌方坦克
+		for(int i=0; i<enemys.size(); i++) {
+			Tank t = enemys.get(i);
+			t.draw(g);
 		}
 	}
 	

@@ -2,6 +2,8 @@ package guyue.hu;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
+import java.util.*;
 
 public class Tank {
 	public static final int WIDTH = 30;
@@ -12,11 +14,16 @@ public class Tank {
 	private Direction ptDirection = Direction.D;
 	private boolean bU, bD, bL, bR;
 	private TankClient tc;
+	private boolean good;
+	private static Random rnd = new Random();
+	private int step = 10 + rnd.nextInt(5);
+	private Direction[] dirs = Direction.values();
 	
-	public Tank(int x, int y, TankClient tc) {
+	public Tank(int x, int y, TankClient tc, boolean good) {
 		this.x = x;
 		this.y = y;
 		this.tc = tc;
+		this.good = good;
 	}
 
 	public void draw(Graphics g) {
@@ -124,6 +131,16 @@ public class Tank {
 		else if(x < 0)  x = 0;
 		if(y > TankClient.GAME_HEIGHT - HEIGHT)  y = TankClient.GAME_HEIGHT - HEIGHT;
 		else if(y < 30)  y = 30;
+		if(!good) {
+			if(step == 0) {
+				step = 10 + rnd.nextInt(5);
+				direction = dirs[rnd.nextInt(8)];
+			}
+			step --;
+			if(rnd.nextInt(40) > 38) {
+				this.fire();
+			}
+		}
 	}
 	
 	/**
@@ -162,6 +179,27 @@ public class Tank {
 		case STOP :
 			break;
 		}
+	}
+	
+	public Rectangle getRect() {
+		return new Rectangle(x , y, WIDTH, HEIGHT);
+	}
+	
+	/**
+	 * 检查坦克是否重叠
+	 */
+	public boolean isOverlap(List<Tank> tanks) {
+		if(tanks.size() == 0) {
+			return false;
+		} else {
+			for(int i=0; i<tanks.size(); i++) {
+				Tank t = tanks.get(i);
+				if(this != t && this.getRect().intersects(t.getRect())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 }
