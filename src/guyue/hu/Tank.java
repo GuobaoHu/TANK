@@ -6,13 +6,17 @@ import java.awt.event.*;
 public class Tank {
 	public static final int WIDTH = 30;
 	public static final int HEIGHT = 30;
+	public static final int STEP = 5;
 	private int x, y;
 	private Direction direction = Direction.STOP;
+	private Direction ptDirection = Direction.D;
 	private boolean bU, bD, bL, bR;
+	private TankClient tc;
 	
-	public Tank(int x, int y) {
+	public Tank(int x, int y, TankClient tc) {
 		this.x = x;
 		this.y = y;
+		this.tc = tc;
 	}
 
 	public void draw(Graphics g) {
@@ -21,6 +25,7 @@ public class Tank {
 		g.fillOval(x, y, WIDTH, HEIGHT);
 		g.setColor(c);
 		this.move();
+		this.drawPT(g);
 	}
 	
 	public void KeyPressed(KeyEvent e) {
@@ -45,10 +50,15 @@ public class Tank {
 			bL = false;
 		} else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
 			bR = false;
+		} else if(e.getKeyCode() == KeyEvent.VK_1) {
+			this.fire();
 		}
 		this.defDir();
 	}
 	
+	/**
+	 * 根据按键组合定义移动方向
+	 */
 	public void defDir() {
 		if(bU && !bD && !bL && !bR) {
 			direction = Direction.U;
@@ -71,38 +81,87 @@ public class Tank {
 		}
 	}
 	
+	/**
+	 * 移动的具体实现及出界判断
+	 */
 	public void move() {
+		if(direction != Direction.STOP) {
+			ptDirection = direction;
+		}
 		switch(direction) {
 		case U :
-			y -= 5;
+			y -= STEP;
 			break;
 		case D :
-			y += 5;
+			y += STEP;
 			break;
 		case L :
-			y -= 5;
+			x -= STEP;
 			break;
 		case R :
-			x += 5;
+			x += STEP;
 			break;
 		case LU :
-			x -= 5;
-			y -= 5;
+			x -= STEP;
+			y -= STEP;
 			break;
 		case RU :
-			x += 5;
-			y -= 5;
+			x += STEP;
+			y -= STEP;
 			break;
 		case LD :
-			x -= 5;
-			y += 5;
+			x -= STEP;
+			y += STEP;
 			break;
 		case RD :
-			x += 5;
-			y += 5;
+			x += STEP;
+			y += STEP;
+			break;
+		case STOP :
+			break;
+		}
+		if(x > TankClient.GAME_WIDTH - WIDTH)  x = TankClient.GAME_WIDTH - WIDTH;
+		else if(x < 0)  x = 0;
+		if(y > TankClient.GAME_HEIGHT - HEIGHT)  y = TankClient.GAME_HEIGHT - HEIGHT;
+		else if(y < 30)  y = 30;
+	}
+	
+	/**
+	 * 开火
+	 */
+	public void fire() {
+		tc.getBullets().add(new Bullet(x+WIDTH/2-Bullet.SIZE/2, y+HEIGHT/2-Bullet.SIZE/2, ptDirection, tc));
+	}
+	
+	public void drawPT(Graphics g) {
+		switch(ptDirection) {
+		case U :
+			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x+WIDTH/2, y);
+			break;
+		case D :
+			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x+WIDTH/2, y+HEIGHT);
+			break;
+		case L :
+			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x, y+HEIGHT/2);
+			break;
+		case R :
+			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x+WIDTH, y+HEIGHT/2);
+			break;
+		case LU :
+			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x, y);
+			break;
+		case RU :
+			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x+WIDTH, y);
+			break;
+		case LD :
+			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x, y+HEIGHT);
+			break;
+		case RD :
+			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x+WIDTH, y+HEIGHT);
 			break;
 		case STOP :
 			break;
 		}
 	}
+	
 }

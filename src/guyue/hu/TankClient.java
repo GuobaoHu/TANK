@@ -2,6 +2,9 @@ package guyue.hu;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
+import java.util.List;
+
 
 /**
  * GAME界面
@@ -12,16 +15,24 @@ import java.awt.event.*;
 public class TankClient extends Frame {
 	public static final int GAME_WIDTH = 800;
 	public static final int GAME_HEIGHT = 600;
+	/**
+	 * 重画间隔(ms)
+	 */
 	public static final int PCELL = 50;
-	private Tank myTank = new Tank(100, 150);	
+	private Tank myTank = new Tank(100, 150, this);	
 	private boolean flag = true;
 	private Image image;
+	private List<Bullet> bullets = new ArrayList<Bullet>();
 	
 	public static void main(String[] args) {
 		TankClient tc = new TankClient();
 		tc.launch();
 	}
 	
+	public List<Bullet> getBullets() {
+		return bullets;
+	}
+
 	public void launch() {
 		this.setBounds(300, 300, GAME_WIDTH, GAME_HEIGHT);
 		this.setResizable(false);
@@ -38,7 +49,13 @@ public class TankClient extends Frame {
 
 	@Override
 	public void paint(Graphics g) {
+		g.drawString("bullets count:" + bullets.size(), 10, 40);
 		myTank.draw(g);
+		 // 用for循环而不用Iterator，因为后者在循环过程中会锁定对象
+		for(int i=0; i<bullets.size(); i++) {
+			Bullet b = bullets.get(i);
+			b.draw(g);
+		}
 	}
 	
 	/**
