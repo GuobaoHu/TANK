@@ -1,6 +1,7 @@
 package guyue.hu;
 
 import java.awt.*;
+import java.util.List;
 
 public class Bullet {
 	public static final int SIZE = 10;
@@ -9,12 +10,14 @@ public class Bullet {
 	private Direction direction;
 	private TankClient tc;
 	private boolean live = true;
-
-	public Bullet(int x, int y, Direction direction, TankClient tc) {
+	private boolean good;
+	
+	public Bullet(int x, int y, Direction direction, TankClient tc, boolean good) {
 		this.x = x;
 		this.y = y;
 		this.direction = direction;
 		this.tc = tc;
+		this.good = good;
 	}
 	
 	public void draw(Graphics g) {
@@ -66,6 +69,41 @@ public class Bullet {
 			this.live = false;
 			tc.getBullets().remove(this);
 		}
+	}
+	
+	/**
+	 * 获取子弹的Rectangle
+	 * @return 返回Rectangle,用于做碰撞检测
+	 */
+	public Rectangle getRect() {
+		return new Rectangle(x, y, SIZE, SIZE);
+	}
+	
+	/**
+	 * 子弹是否击中坦克判断
+	 * @param t 被击中坦克
+	 * @return 被击中返回true，否则false
+	 */
+	public boolean hitTank(Tank t) {
+		if(live && t.isLive() && (good!=t.isGood()) &&
+				this.getRect().intersects(t.getRect())) {
+			live = false;
+			t.setLive(false);
+			tc.getBullets().remove(this);
+			tc.getEnemys().remove(t);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean hitTanks(List<Tank> tanks) {
+		for(int i=0; i<tanks.size(); i++) {
+			Tank t = tanks.get(i);
+			if(this.hitTank(t)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

@@ -15,6 +15,7 @@ public class Tank {
 	private boolean bU, bD, bL, bR;
 	private TankClient tc;
 	private boolean good;
+	private boolean live = true;
 	private static Random rnd = new Random();
 	private int step = 10 + rnd.nextInt(5);
 	private Direction[] dirs = Direction.values();
@@ -26,7 +27,20 @@ public class Tank {
 		this.good = good;
 	}
 
+	public boolean isGood() {
+		return good;
+	}
+
+	public boolean isLive() {
+		return live;
+	}
+
+	public void setLive(boolean live) {
+		this.live = live;
+	}
+
 	public void draw(Graphics g) {
+		if(!live) return;
 		Color c = g.getColor();
 		g.setColor(Color.ORANGE);
 		g.fillOval(x, y, WIDTH, HEIGHT);
@@ -147,7 +161,8 @@ public class Tank {
 	 * ¿ª»ð
 	 */
 	public void fire() {
-		tc.getBullets().add(new Bullet(x+WIDTH/2-Bullet.SIZE/2, y+HEIGHT/2-Bullet.SIZE/2, ptDirection, tc));
+		tc.getBullets().add(new Bullet(x+WIDTH/2-Bullet.SIZE/2, 
+				y+HEIGHT/2-Bullet.SIZE/2, ptDirection, tc, good));
 	}
 	
 	public void drawPT(Graphics g) {

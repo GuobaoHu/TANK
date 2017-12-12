@@ -76,7 +76,9 @@ public class TankClient extends Frame {
 		 // 用for循环而不用Iterator，因为后者在循环过程中会锁定对象
 		for(int i=0; i<bullets.size(); i++) {
 			Bullet b = bullets.get(i);
-			b.draw(g);
+			if(!b.hitTanks(enemys) && !b.hitTank(myTank)) {
+				b.draw(g);
+			}
 		}
 		//绘制敌方坦克
 		for(int i=0; i<enemys.size(); i++) {
