@@ -26,6 +26,9 @@ public class TankClient extends Frame {
 	private List<Tank> enemys = new ArrayList<Tank>();
 	private List<Boom> booms = new ArrayList<Boom>();
 	private static Random rnd = new Random();
+	private Wall w1 = new Wall(100, 500, 300, 50);
+	private Wall w2 = new Wall(700, 250, 50, 300);
+	private Food f = new Food();
 	
 	public static void main(String[] args) {
 		TankClient tc = new TankClient();
@@ -43,7 +46,7 @@ public class TankClient extends Frame {
 		for(int i=0; i<10; i++) {
 			Tank t = new Tank(rnd.nextInt(GAME_WIDTH-Tank.WIDTH), 
 					30+rnd.nextInt(GAME_HEIGHT-Tank.HEIGHT-30), this, false);
-			while(t.isOverlap(enemys)) {
+			while(t.isOverlap(enemys) || t.hitWall(w1) || t.hitWall(w2)) {
 				t = new Tank(rnd.nextInt(GAME_WIDTH-Tank.WIDTH), 
 						30+rnd.nextInt(GAME_HEIGHT-Tank.HEIGHT-30), this, false);
 			}
@@ -79,17 +82,26 @@ public class TankClient extends Frame {
 		g.drawString("bullets count:" + bullets.size(), 10, 40);
 		g.drawString("enemys count:" + enemys.size(), 10, 60);
 		g.drawString("booms count:" + booms.size(), 10, 80);
+		g.drawString("Life:" + myTank.getLife(), 10, 100);
 		myTank.draw(g);
-		 // 用for循环而不用Iterator，因为后者在循环过程中会锁定对象
+		myTank.eat(f);
+		f.draw(g);
+		 // 用for循环而不用Iterator，因为后者在循环过程中会锁定对象,而且对于ArrayList来说，for循环的下标访问比Iterator要快得多
 		for(int i=0; i<bullets.size(); i++) {
 			Bullet b = bullets.get(i);
-			if(!b.hitTanks(enemys) && !b.hitTank(myTank)) {
+			if(!b.hitTanks(enemys) && !b.hitTank(myTank) && 
+					!b.hitWall(w1) && !b.hitWall(w2)) {
 				b.draw(g);
 			}
 		}
+		w1.draw(g);
+		w2.draw(g);
 		//绘制敌方坦克
 		for(int i=0; i<enemys.size(); i++) {
 			Tank t = enemys.get(i);
+			t.isOverlap(enemys);
+			t.hitWall(w1);
+			t.hitWall(w2);
 			t.draw(g);
 		}
 		for(int i=0; i<booms.size(); i++) {

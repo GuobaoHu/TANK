@@ -10,6 +10,7 @@ public class Tank {
 	public static final int HEIGHT = 30;
 	public static final int STEP = 5;
 	private int x, y;
+	private int preX, preY;
 	private Direction direction = Direction.STOP;
 	private Direction ptDirection = Direction.D;
 	private boolean bU, bD, bL, bR;
@@ -19,12 +20,24 @@ public class Tank {
 	private static Random rnd = new Random();
 	private int step = 10 + rnd.nextInt(5);
 	private Direction[] dirs = Direction.values();
+	private int life = 100;
+	private Blood blood = new Blood();
 	
 	public Tank(int x, int y, TankClient tc, boolean good) {
 		this.x = x;
+		preX = x;
 		this.y = y;
+		preY = y;
 		this.tc = tc;
 		this.good = good;
+	}
+
+	public int getLife() {
+		return life;
+	}
+
+	public void setLife(int life) {
+		this.life = life;
 	}
 
 	public boolean isGood() {
@@ -41,9 +54,12 @@ public class Tank {
 
 	public void draw(Graphics g) {
 		if(!live) return;
+		preX = x;
+		preY = y;
 		Color c = g.getColor();
 		g.setColor(Color.ORANGE);
 		g.fillOval(x, y, WIDTH, HEIGHT);
+		if(good) blood.draw(g);
 		g.setColor(c);
 		this.move();
 		this.drawPT(g);
@@ -58,6 +74,11 @@ public class Tank {
 			bL = true;
 		} else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
 			bR = true;
+		} else if(e.getKeyCode() == KeyEvent.VK_F2) {
+			if(good) {
+				live = true;
+				life = 100;
+			}
 		}
 		this.defDir();
 	}
@@ -212,6 +233,8 @@ public class Tank {
 			for(int i=0; i<tanks.size(); i++) {
 				Tank t = tanks.get(i);
 				if(this != t && this.getRect().intersects(t.getRect())) {
+					x = preX;
+					y = preY;
 					return true;
 				}
 			}
@@ -219,4 +242,42 @@ public class Tank {
 		return false;
 	}
 	
+	/**
+	 * 撞墙判定
+	 * @param w 墙
+	 * @return 撞墙了返回true，没撞到返回false
+	 */
+	public boolean hitWall(Wall w) {
+		if(live && this.getRect().intersects(w.getRect())) {
+			x = preX;
+			y = preY;
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 吃食物判定
+	 * @param f 食物
+	 * @return 吃到了返回true,没吃到返回false
+	 */
+	public boolean eat(Food f) {
+		if(good && live && this.getRect().intersects(f.getRect())) {
+			life = 100;
+			f.setLive(false);
+			return true;
+		}
+		return false;
+	}
+	
+	private class Blood {
+		public void draw(Graphics g) {
+			Color c = g.getColor();
+			g.setColor(Color.RED);
+			g.drawRect(x, y-10, WIDTH, 5);
+			g.setColor(Color.GREEN);
+			g.fillRect(x, y-10, WIDTH*life/100, 5);
+			g.setColor(c);
+		}
+	}
 }

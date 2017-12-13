@@ -23,7 +23,11 @@ public class Bullet {
 	public void draw(Graphics g) {
 		if(!live) return;
 		Color c = g.getColor();
-		g.setColor(Color.RED);
+		if(good) {
+			g.setColor(Color.BLACK);
+		} else {
+			g.setColor(Color.RED);
+		}
 		g.fillRect(x, y, SIZE, SIZE);
 		g.setColor(c);
 		this.move();
@@ -87,8 +91,15 @@ public class Bullet {
 	public boolean hitTank(Tank t) {
 		if(live && t.isLive() && (good!=t.isGood()) &&
 				this.getRect().intersects(t.getRect())) {
+			if(!t.isGood()) {
+				t.setLive(false);
+			} else if(t.isGood()) {
+				t.setLife(t.getLife()-10);
+				if(t.getLife() <= 0) {
+					t.setLive(false);
+				}
+			}
 			live = false;
-			t.setLive(false);
 			tc.getBullets().remove(this);
 			tc.getEnemys().remove(t);
 			tc.getBooms().add(new Boom(x, y, tc));
@@ -104,7 +115,21 @@ public class Bullet {
 				return true;
 			}
 		}
+		if(tanks.size() == 0) {
+			tc.addEnmeys();
+		}
 		return false;
 	}
 	
+	/**
+	 * ×²Ç½ÅÐ¶¨
+	 */
+	public boolean hitWall(Wall w) {
+		if(live && this.getRect().intersects(w.getRect())) {
+			live = false;
+			tc.getBullets().remove(this);
+			return true;
+		}
+		return false;
+	}
 }
