@@ -42,8 +42,8 @@ public class TankClient extends Frame {
 	/**
 	 * Ôö¼ÓµĞÈË
 	 */
-	public void addEnmeys() {
-		for(int i=0; i<10; i++) {
+	public void addEnmeys(int count) {
+		for(int i=0; i<count; i++) {
 			Tank t = new Tank(rnd.nextInt(GAME_WIDTH-Tank.WIDTH), 
 					30+rnd.nextInt(GAME_HEIGHT-Tank.HEIGHT-30), this, false);
 			while(t.isOverlap(enemys) || t.hitWall(w1) || t.hitWall(w2)) {
@@ -71,18 +71,22 @@ public class TankClient extends Frame {
 				System.exit(0);
 			}
 		});
+		this.setBackground(Color.BLACK);
 		this.addKeyListener(new KeyMonitor());
-		this.addEnmeys();
+		this.addEnmeys(Integer.parseInt(PropMgrs.getProps("enemyCounts")));
 		new Thread(new RePnt()).start();
 		this.setVisible(true);
 	}
 
 	@Override
 	public void paint(Graphics g) {
+		Color c = g.getColor();
+		g.setColor(Color.WHITE);
 		g.drawString("bullets count:" + bullets.size(), 10, 40);
 		g.drawString("enemys count:" + enemys.size(), 10, 60);
 		g.drawString("booms count:" + booms.size(), 10, 80);
 		g.drawString("Life:" + myTank.getLife(), 10, 100);
+		g.setColor(c);
 		myTank.draw(g);
 		myTank.eat(f);
 		f.draw(g);
@@ -119,7 +123,7 @@ public class TankClient extends Frame {
 		}
 		Graphics gD = image.getGraphics();
 		Color c = gD.getColor();
-		gD.setColor(Color.WHITE);
+		gD.setColor(Color.BLACK);
 		gD.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 		gD.setColor(c);
 		this.paint(gD);

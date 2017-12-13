@@ -2,7 +2,11 @@ package guyue.hu;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.List;
+
+import javax.imageio.ImageIO;
+
 import java.util.*;
 
 public class Tank {
@@ -22,6 +26,33 @@ public class Tank {
 	private Direction[] dirs = Direction.values();
 	private int life = 100;
 	private Blood blood = new Blood();
+	private static Image[] imgs;
+	private static Map<String, Image> bImgs = new HashMap<String, Image>();
+	
+	static {
+		try {
+			imgs = new Image[] {
+					ImageIO.read(Tank.class.getResource("/images/tankU.gif")),
+					ImageIO.read(Tank.class.getResource("/images/tankD.gif")),
+					ImageIO.read(Tank.class.getResource("/images/tankL.gif")),
+					ImageIO.read(Tank.class.getResource("/images/tankR.gif")),
+					ImageIO.read(Tank.class.getResource("/images/tankLU.gif")),
+					ImageIO.read(Tank.class.getResource("/images/tankRU.gif")),
+					ImageIO.read(Tank.class.getResource("/images/tankLD.gif")),
+					ImageIO.read(Tank.class.getResource("/images/tankRD.gif")),
+			};
+			bImgs.put("U", imgs[0]);
+			bImgs.put("D", imgs[1]);
+			bImgs.put("L", imgs[2]);
+			bImgs.put("R", imgs[3]);
+			bImgs.put("LU", imgs[4]);
+			bImgs.put("RU", imgs[5]);
+			bImgs.put("LD", imgs[6]);
+			bImgs.put("RD", imgs[7]);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public Tank(int x, int y, TankClient tc, boolean good) {
 		this.x = x;
@@ -56,13 +87,9 @@ public class Tank {
 		if(!live) return;
 		preX = x;
 		preY = y;
-		Color c = g.getColor();
-		g.setColor(Color.ORANGE);
-		g.fillOval(x, y, WIDTH, HEIGHT);
 		if(good) blood.draw(g);
-		g.setColor(c);
-		this.move();
 		this.drawPT(g);
+		this.move();
 	}
 	
 	public void KeyPressed(KeyEvent e) {
@@ -191,28 +218,28 @@ public class Tank {
 	public void drawPT(Graphics g) {
 		switch(ptDirection) {
 		case U :
-			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x+WIDTH/2, y);
+			g.drawImage(bImgs.get("U"), x, y, null);
 			break;
 		case D :
-			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x+WIDTH/2, y+HEIGHT);
+			g.drawImage(bImgs.get("D"), x, y, null);
 			break;
 		case L :
-			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x, y+HEIGHT/2);
+			g.drawImage(bImgs.get("L"), x, y, null);
 			break;
 		case R :
-			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x+WIDTH, y+HEIGHT/2);
+			g.drawImage(bImgs.get("R"), x, y, null);
 			break;
 		case LU :
-			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x, y);
+			g.drawImage(bImgs.get("LU"), x, y, null);
 			break;
 		case RU :
-			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x+WIDTH, y);
+			g.drawImage(bImgs.get("RU"), x, y, null);
 			break;
 		case LD :
-			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x, y+HEIGHT);
+			g.drawImage(bImgs.get("LD"), x, y, null);
 			break;
 		case RD :
-			g.drawLine(x+WIDTH/2, y+HEIGHT/2, x+WIDTH, y+HEIGHT);
+			g.drawImage(bImgs.get("RD"), x, y, null);
 			break;
 		case STOP :
 			break;

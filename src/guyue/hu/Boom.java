@@ -1,13 +1,36 @@
 package guyue.hu;
 
 import java.awt.*;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class Boom {
 	private int x, y;
-	private int[] diameters = { 2, 5, 8, 10, 15, 20, 25, 30, 35, 40, 30, 20, 10, 2 };
+	private static Image[] imgs;
 	private TankClient tc;
 	private int step = 0;
 	private boolean live = true;
+	
+	static {
+		try {
+			imgs = new Image[] {
+					ImageIO.read(Boom.class.getResource("/images/0.gif")),
+					ImageIO.read(Boom.class.getResource("/images/1.gif")),
+					ImageIO.read(Boom.class.getResource("/images/2.gif")),
+					ImageIO.read(Boom.class.getResource("/images/3.gif")),
+					ImageIO.read(Boom.class.getResource("/images/4.gif")),
+					ImageIO.read(Boom.class.getResource("/images/5.gif")),
+					ImageIO.read(Boom.class.getResource("/images/6.gif")),
+					ImageIO.read(Boom.class.getResource("/images/7.gif")),
+					ImageIO.read(Boom.class.getResource("/images/8.gif")),
+					ImageIO.read(Boom.class.getResource("/images/9.gif")),
+					ImageIO.read(Boom.class.getResource("/images/10.gif")),
+			};
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public Boom(int x, int y, TankClient tc) {
 		this.x = x;
@@ -20,12 +43,9 @@ public class Boom {
 			tc.getBooms().remove(this);
 			return;
 		}
-		Color c = g.getColor();
-		g.setColor(Color.RED);
-		g.fillOval(x, y, diameters[step], diameters[step]);
-		g.setColor(c);
+		g.drawImage(imgs[step], x, y, null);
 		step ++;
-		if(step == diameters.length) {
+		if(step == imgs.length) {
 			step = 0;
 			live = false;
 		}

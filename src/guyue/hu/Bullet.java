@@ -1,7 +1,12 @@
 package guyue.hu;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.List;
+
+import javax.imageio.ImageIO;
+
+import java.util.*;
 
 public class Bullet {
 	public static final int SIZE = 10;
@@ -11,6 +16,33 @@ public class Bullet {
 	private TankClient tc;
 	private boolean live = true;
 	private boolean good;
+	private static Image[] imgs;
+	private static Map<String, Image> bImgs = new HashMap<String, Image>();
+	
+	static {
+		try {
+			imgs = new Image[] {
+					ImageIO.read(Bullet.class.getResource("/images/missileU.gif")),
+					ImageIO.read(Bullet.class.getResource("/images/missileD.gif")),
+					ImageIO.read(Bullet.class.getResource("/images/missileL.gif")),
+					ImageIO.read(Bullet.class.getResource("/images/missileR.gif")),
+					ImageIO.read(Bullet.class.getResource("/images/missileLU.gif")),
+					ImageIO.read(Bullet.class.getResource("/images/missileRU.gif")),
+					ImageIO.read(Bullet.class.getResource("/images/missileLD.gif")),
+					ImageIO.read(Bullet.class.getResource("/images/missileRD.gif")),
+			};
+			bImgs.put("U", imgs[0]);
+			bImgs.put("D", imgs[1]);
+			bImgs.put("L", imgs[2]);
+			bImgs.put("R", imgs[3]);
+			bImgs.put("LU", imgs[4]);
+			bImgs.put("RU", imgs[5]);
+			bImgs.put("LD", imgs[6]);
+			bImgs.put("RD", imgs[7]);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public Bullet(int x, int y, Direction direction, TankClient tc, boolean good) {
 		this.x = x;
@@ -22,47 +54,47 @@ public class Bullet {
 	
 	public void draw(Graphics g) {
 		if(!live) return;
-		Color c = g.getColor();
-		if(good) {
-			g.setColor(Color.BLACK);
-		} else {
-			g.setColor(Color.RED);
-		}
-		g.fillRect(x, y, SIZE, SIZE);
-		g.setColor(c);
-		this.move();
+		this.move(g);
 	}
 
 	/**
 	 * 子弹移动，并做出界判断
 	 */
-	public void move() {
+	public void move(Graphics g) {
 		switch(direction) {
 		case U :
+			g.drawImage(bImgs.get("U"), x, y, null);
 			y -= STEP;
 			break;
 		case D :
+			g.drawImage(bImgs.get("D"), x, y, null);
 			y += STEP;
 			break;
 		case L :
-			y -= STEP;
+			g.drawImage(bImgs.get("L"), x, y, null);
+			x -= STEP;
 			break;
 		case R :
+			g.drawImage(bImgs.get("R"), x, y, null);
 			x += STEP;
 			break;
 		case LU :
+			g.drawImage(bImgs.get("LU"), x, y, null);
 			x -= STEP;
 			y -= STEP;
 			break;
 		case RU :
+			g.drawImage(bImgs.get("RU"), x, y, null);
 			x += STEP;
 			y -= STEP;
 			break;
 		case LD :
+			g.drawImage(bImgs.get("LD"), x, y, null);
 			x -= STEP;
 			y += STEP;
 			break;
 		case RD :
+			g.drawImage(bImgs.get("RD"), x, y, null);
 			x += STEP;
 			y += STEP;
 			break;
@@ -116,7 +148,7 @@ public class Bullet {
 			}
 		}
 		if(tanks.size() == 0) {
-			tc.addEnmeys();
+			tc.addEnmeys(Integer.parseInt(PropMgrs.getProps("reAdd")));
 		}
 		return false;
 	}
