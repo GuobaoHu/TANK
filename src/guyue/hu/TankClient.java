@@ -24,6 +24,7 @@ public class TankClient extends Frame {
 	private Image image;
 	private List<Bullet> bullets = new ArrayList<Bullet>();
 	private List<Tank> enemys = new ArrayList<Tank>();
+	private List<Boom> booms = new ArrayList<Boom>();
 	private static Random rnd = new Random();
 	
 	public static void main(String[] args) {
@@ -31,6 +32,10 @@ public class TankClient extends Frame {
 		tc.launch();
 	}
 	
+	public List<Boom> getBooms() {
+		return booms;
+	}
+
 	/**
 	 * 增加敌人
 	 */
@@ -72,6 +77,8 @@ public class TankClient extends Frame {
 	@Override
 	public void paint(Graphics g) {
 		g.drawString("bullets count:" + bullets.size(), 10, 40);
+		g.drawString("enemys count:" + enemys.size(), 10, 60);
+		g.drawString("booms count:" + booms.size(), 10, 80);
 		myTank.draw(g);
 		 // 用for循环而不用Iterator，因为后者在循环过程中会锁定对象
 		for(int i=0; i<bullets.size(); i++) {
@@ -84,6 +91,10 @@ public class TankClient extends Frame {
 		for(int i=0; i<enemys.size(); i++) {
 			Tank t = enemys.get(i);
 			t.draw(g);
+		}
+		for(int i=0; i<booms.size(); i++) {
+			Boom boom = booms.get(i);
+			boom.draw(g);
 		}
 	}
 	

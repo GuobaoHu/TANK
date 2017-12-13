@@ -91,6 +91,7 @@ public class Bullet {
 			t.setLive(false);
 			tc.getBullets().remove(this);
 			tc.getEnemys().remove(t);
+			tc.getBooms().add(new Boom(x, y, tc));
 			return true;
 		}
 		return false;

@@ -72,7 +72,9 @@ public class Tank {
 		} else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
 			bR = false;
 		} else if(e.getKeyCode() == KeyEvent.VK_1) {
-			this.fire();
+			if(live) {
+				this.fire();
+			}
 		}
 		this.defDir();
 	}
